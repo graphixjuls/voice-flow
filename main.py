@@ -11,6 +11,7 @@ from pystray import Icon, Menu, MenuItem
 from cloud_transcriber import CloudTranscriber
 from config import LOG_PATH, load_config, save_config
 from hotkey_manager import HotkeyManager
+from cuda_setup import setup_cuda_dlls
 from paste_service import paste_text
 from recorder import Recorder
 from settings_dialog import SettingsDialog
@@ -26,6 +27,12 @@ file_handler = logging.FileHandler(LOG_PATH, encoding="utf-8")
 file_handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
 if not any(isinstance(h, logging.FileHandler) for h in root_logger.handlers):
     root_logger.addHandler(file_handler)
+
+# Register CUDA DLL directories early before any model is accessed
+try:
+    setup_cuda_dlls()
+except Exception as exc:
+    logging.warning("Initial CUDA setup failed: %s", exc)
 
 
 def log_exception(context: str):
