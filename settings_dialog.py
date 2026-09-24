@@ -33,7 +33,8 @@ class SettingsDialog:
         self.window.minsize(500, 580)
         self.window.configure(bg=BG)
         self.window.transient(parent)
-        self.window.grab_set()
+        self.window.focus_set()
+        self.window.lift()
 
         # Center on screen
         sw = self.window.winfo_screenwidth()
@@ -498,16 +499,33 @@ class SettingsDialog:
         else:
             self.api_key_var.set(self.cfg.get("openai_api_key", ""))
 
+    def _poll_test_meter(self):
+        if not self._testing_mic:
+            return
+        try:
+            w = self.meter_canvas.winfo_width()
+            lvl = getattr(self, "_test_level", 0.0)
+            bar_w = int(w * lvl)
+            self.meter_canvas.coords(self.meter_bar, 0, 0, bar_w, 18)
+        except Exception:
+            pass
+        if self._testing_mic:
+            self.window.after(35, self._poll_test_meter)
+
     def _toggle_test_mic(self):
         if self._testing_mic:
             self._testing_mic = False
             self.test_btn.configure(text="🎤 Test Microphone", bg=SURFACE2)
             if self._test_rec:
-                self._test_rec.stop()
+                try:
+                    self._test_rec.stop()
+                except Exception:
+                    pass
                 self._test_rec = None
             self.meter_canvas.coords(self.meter_bar, 0, 0, 0, 18)
         else:
             self._testing_mic = True
+            self._test_level = 0.0
             self.test_btn.configure(text="⏹ Stop Test", bg=ERROR)
 
             dev_val = self.device_var.get()
@@ -519,15 +537,12 @@ class SettingsDialog:
                     dev_idx = None
 
             def on_level(lvl):
-                if not self._testing_mic:
-                    return
-                w = self.meter_canvas.winfo_width()
-                bar_w = int(w * lvl)
-                self.window.after(0, lambda: self.meter_canvas.coords(self.meter_bar, 0, 0, bar_w, 18))
+                self._test_level = lvl
 
             self._test_rec = Recorder(device=dev_idx, on_level=on_level)
             try:
                 self._test_rec.start()
+                self.window.after(35, self._poll_test_meter)
             except Exception as exc:
                 self._testing_mic = False
                 self.test_btn.configure(text="🎤 Test Microphone", bg=SURFACE2)

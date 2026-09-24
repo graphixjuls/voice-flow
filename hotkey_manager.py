@@ -6,7 +6,11 @@ import keyboard
 
 
 class HotkeyManager:
-    """Manages global hotkey listening for both Push-to-Talk (Hold) and Toggle modes."""
+    """Manages global hotkey listening for both Push-to-Talk (Hold) and Toggle modes.
+    
+    Uses threading.RLock and fires callbacks outside of lock critical sections to
+    completely eliminate deadlocks with caller threads.
+    """
 
     def __init__(
         self,
@@ -23,7 +27,7 @@ class HotkeyManager:
         self._keys: List[str] = [k.strip() for k in self.hotkey_str.split("+") if k.strip()]
         self._was_down = False
         self._is_recording = False
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         self._hooked = False
 
     def update_config(self, hotkey_str: str, mode: str):
@@ -39,6 +43,7 @@ class HotkeyManager:
             self._is_recording = recording
 
     def _on_key_event(self, _event):
+        to_call = None
         try:
             with self._lock:
                 if not self._keys:
@@ -47,29 +52,32 @@ class HotkeyManager:
                 all_down = all(keyboard.is_pressed(k) for k in self._keys)
 
                 if all_down and not self._was_down:
-                    # Hotkey combo just transitioned to DOWN
                     self._was_down = True
                     if self.mode == "toggle":
                         if self._is_recording:
-                            if self.on_stop_record:
-                                self.on_stop_record()
+                            to_call = self.on_stop_record
                         else:
-                            if self.on_start_record:
-                                self.on_start_record()
+                            to_call = self.on_start_record
                     else:
                         # Hold mode
-                        if not self._is_recording and self.on_start_record:
-                            self.on_start_record()
+                        if not self._is_recording:
+                            to_call = self.on_start_record
 
                 elif not all_down and self._was_down:
-                    # Hotkey combo released
                     self._was_down = False
                     if self.mode == "hold":
-                        if self._is_recording and self.on_stop_record:
-                            self.on_stop_record()
+                        if self._is_recording:
+                            to_call = self.on_stop_record
 
         except Exception as exc:
             logging.debug("Hotkey evaluation exception: %s", exc)
+
+        # Fire callbacks OUTSIDE the lock to prevent recursive deadlocks
+        if to_call:
+            try:
+                to_call()
+            except Exception as exc:
+                logging.error("Hotkey callback raised exception: %s", exc)
 
     def start(self):
         with self._lock:

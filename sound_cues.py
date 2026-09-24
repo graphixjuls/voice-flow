@@ -7,7 +7,10 @@ def _play_start_tone():
         winsound.Beep(587, 50)  # D5
         winsound.Beep(880, 70)  # A5
     except Exception:
-        pass
+        try:
+            winsound.MessageBeep(winsound.MB_OK)
+        except Exception:
+            pass
 
 
 def _play_stop_tone():
@@ -15,7 +18,10 @@ def _play_stop_tone():
         winsound.Beep(784, 50)  # G5
         winsound.Beep(523, 70)  # C5
     except Exception:
-        pass
+        try:
+            winsound.MessageBeep(winsound.MB_OK)
+        except Exception:
+            pass
 
 
 def _play_success_tone():
@@ -23,14 +29,20 @@ def _play_success_tone():
         winsound.Beep(659, 40)  # E5
         winsound.Beep(880, 60)  # A5
     except Exception:
-        pass
+        try:
+            winsound.MessageBeep(winsound.MB_OK)
+        except Exception:
+            pass
 
 
 def _play_error_tone():
     try:
         winsound.Beep(330, 120)
     except Exception:
-        pass
+        try:
+            winsound.MessageBeep(winsound.MB_ICONHAND)
+        except Exception:
+            pass
 
 
 def play_cue(cue_type: str, enabled: bool = True):

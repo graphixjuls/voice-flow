@@ -1,5 +1,6 @@
 import logging
 import threading
+import time
 from typing import Callable, List, Optional, Tuple
 
 import numpy as np
@@ -41,6 +42,7 @@ class Recorder:
         self._stream = None
         self._lock = threading.Lock()
         self._is_recording = False
+        self._last_level_time = 0.0
 
     @property
     def is_recording(self) -> bool:
@@ -56,12 +58,14 @@ class Recorder:
         with self._lock:
             self._frames.append(indata.copy())
 
-        if self.on_level:
+        # Throttle on_level callback to max ~30 FPS (every 33ms) to prevent UI event loop flooding
+        now = time.time()
+        if self.on_level and (now - self._last_level_time >= 0.033):
+            self._last_level_time = now
             try:
                 # Calculate Root Mean Square (RMS)
                 rms = float(np.sqrt(np.mean(np.square(indata))))
                 # Scale RMS to [0.0, 1.0] for the VU meter (typical speech rms is 0.01 - 0.25)
-                # Apply logarithmic scaling for natural visual metering
                 level = min(1.0, max(0.0, rms * 5.5))
                 self.on_level(level)
             except Exception:
