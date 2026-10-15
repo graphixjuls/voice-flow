@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voice Flow</title>
+<meta name="description" content="Hold Ctrl+Alt anywhere on Windows, talk, let go — your words land in whatever you were writing. Free, offline, open source.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #181c2f;
+    --navy-2: #1e2338;
+    --accent: #4a5ee8;
+    --accent-2: #6c8bff;
+    --ink: #14161f;
+    --muted: #5f6577;
+    --card: #f6f7ff;
+    --white: #ffffff;
+    --line: #eef0f6;
+    --head: "Plus Jakarta Sans", system-ui, sans-serif;
+    --body: "Inter", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--body); color: var(--ink); background: var(--white); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+  /* ---------- Hero ---------- */
+  .hero { background: var(--navy); color: var(--white); overflow: hidden; position: relative; }
+  .nav {
+    margin: 24px auto 0; max-width: 1080px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.22);
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01));
+    position: relative; z-index: 2;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--head); font-weight: 600; font-size: 17px; }
+  .brand-mark { width: 30px; height: 30px; border-radius: 8px; background: #fff; display: grid; place-items: center; }
+  .src-btn {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
+    padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,.35);
+    transition: background .2s;
+  }
+  .src-btn:hover { background: rgba(255,255,255,.08); }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 24px; padding-top: 40px; padding-bottom: 72px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.12); border-radius: 999px; padding: 6px 12px;
+    font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  }
+  .pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #2f9e63; }
+  .pill.light { background: var(--card); color: var(--accent); font-size: 10px; }
+  h1 {
+    font-family: var(--head); font-weight: 600; font-size: clamp(44px, 6.4vw, 76px);
+    line-height: .98; letter-spacing: -0.03em; margin: 14px 0 22px;
+  }
+  h1 .accent { color: var(--accent); }
+  .lede { color: rgba(255,255,255,.72); font-size: 18px; line-height: 1.5; max-width: 520px; }
+  kbd {
+    font-family: var(--body); font-size: .72em; font-weight: 600; color: var(--accent);
+    background: #fff; border-radius: 5px; padding: 2px 7px; vertical-align: 2px; margin: 0 2px;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 30px;
+    background: var(--accent); color: #fff; font-weight: 500; font-size: 15px;
+    padding: 13px 22px; border-radius: 8px; transition: transform .15s, background .2s;
+  }
+  .btn:hover { background: #3c4fd6; transform: translateY(-1px); }
+  .hero-art { position: relative; aspect-ratio: 1300/1220; }
+  .hero-art img {
+    position: absolute; inset: -6% -14% -6% -4%; width: 118%; height: 112%; object-fit: contain;
+    -webkit-mask-image: radial-gradient(closest-side, #000 78%, transparent 100%);
+            mask-image: radial-gradient(closest-side, #000 78%, transparent 100%);
+    animation: float 9s ease-in-out infinite;
+  }
+  @keyframes float { 50% { transform: translateY(-12px) rotate(1.5deg); } }
+
+  /* ---------- Sections ---------- */
+  section.light { padding: 96px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-family: var(--head); font-weight: 600; font-size: clamp(32px, 4.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em; margin: 14px 0 32px; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .step { background: var(--card); border-radius: 16px; padding: 22px 24px 28px; }
+  .num {
+    width: 54px; height: 54px; border-radius: 50%; background: #fff;
+    display: grid; place-items: center; font-family: var(--head); font-weight: 600; font-size: 22px; color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .step h3, .feat h3 { font-size: 16px; font-weight: 500; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .step h3 kbd { background: var(--accent); color: #fff; font-size: 10px; vertical-align: 0; }
+  .step p, .feat p { color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+  .feats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .feat {
+    background: var(--card); border-radius: 20px; padding: 32px 26px 40px; min-height: 180px;
+    border-top: 8px solid var(--accent);
+  }
+  .feat h3 { margin-bottom: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; margin-bottom: 14px; }
+
+  .get { text-align: center; padding: 88px 0 72px; }
+  .get h2 { margin: 14px 0 12px; }
+  .get .sub { color: var(--muted); font-size: 14px; line-height: 1.5; max-width: 300px; margin: 0 auto 12px; }
+  .get .req { color: var(--muted); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; line-height: 1.8; }
+  .get .btn { margin-top: 22px; }
+  .get .ver { display: block; margin-top: 12px; font-size: 12px; color: var(--muted); }
+  .get .ver a { color: var(--accent); }
+
+  /* ---------- Widget showcase ---------- */
+  .showcase { background: var(--navy); padding: 96px 16px 96px; }
+  .widget {
+    max-width: 410px; margin: 0 auto; background: #17181d; color: #e9eaf0;
+    border-radius: 28px; padding: 28px 22px 22px; box-shadow: 0 40px 80px rgba(0,0,0,.45);
+    font-family: var(--body);
+  }
+  .w-head { display: flex; gap: 16px; align-items: flex-start; }
+  .rec { width: 24px; height: 24px; border-radius: 50%; background: #2a2b33; display: grid; place-items: center; margin-top: 10px; }
+  .rec::after { content: ""; width: 14px; height: 14px; border-radius: 50%; background: #e5485f; animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .45; } }
+  .w-title { font-size: 19px; font-weight: 500; }
+  .w-status { color: #e5485f; font-size: 15px; margin-top: 6px; }
+  .w-hint { color: #8a8c98; margin: 26px 0 26px; font-size: 15px; }
+  .w-hint code {
+    font-family: "JetBrains Mono", monospace; color: #fff; background: #2a2b33;
+    padding: 4px 8px; border-radius: 6px; font-size: 14px;
+  }
+  .w-mode { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+  .w-mode span { font-size: 16px; }
+  .seg { display: flex; background: #23242b; border-radius: 10px; padding: 0; overflow: hidden; }
+  .seg button {
+    font: inherit; font-size: 15px; border: 0; background: transparent; color: #8a8c98;
+    padding: 8px 14px; cursor: pointer;
+  }
+  .seg button.on { background: var(--accent-2); color: #fff; border-radius: 10px; }
+  .w-label { color: #8a8c98; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; }
+  .w-list { background: #23242b; border-radius: 14px; padding: 16px; font-size: 15px; line-height: 1.5; }
+  .w-list p + p { margin-top: 12px; }
+  .w-list time { font-family: "JetBrains Mono", monospace; color: var(--accent-2); margin-right: 6px; }
+  .w-list p:last-child { color: #b9bbc5; }
+
+  footer { padding: 32px 0; font-size: 12px; color: var(--muted); }
+  footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  footer a:hover { color: var(--accent); }
+
+  @media (max-width: 820px) {
+    .hero-grid { grid-template-columns: 1fr; padding-top: 28px; }
+    .hero-art { max-width: 420px; width: 100%; margin: 0 auto; order: -1; }
+    .hero-art img { inset: 0; width: 100%; height: 100%; }
+    .steps, .feats { grid-template-columns: 1fr; }
+    section.light { padding: 64px 0; }
+    .nav { margin: 16px 16px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero-art img, .rec::after { animation: none; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <nav class="nav">
+    <a class="brand" href="#">
+      <span class="brand-mark">
+        <svg width="16" height="20" viewBox="0 0 16 20" fill="none"><rect x="4" y="0" width="8" height="13" rx="4" fill="#4a5ee8"/><path d="M1 9a7 7 0 0 0 14 0M8 16v4M4 19.5h8" stroke="#181c2f" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </span>
+      Voice Flow
+    </a>
+    <a class="src-btn" href="https://github.com/graphixjuls/voice-flow" target="_blank" rel="noopener">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      Source
+    </a>
+  </nav>
+
+  <div class="wrap hero-grid">
+    <div>
+      <span class="pill">Free · Offline · Open source</span>
+      <h1>Just speak.<br>It transcribes,<br><span class="accent">itself</span>.</h1>
+      <p class="lede">Hold <kbd>Ctrl</kbd>+<kbd>Alt</kbd> anywhere on Windows, talk, let go — your words land in whatever you were writing. Runs Whisper locally, so nothing leaves your machine unless you turn cloud mode on.</p>
+      <a class="btn" href="https://github.com/graphixjuls/voice-flow/releases/latest/download/VoiceFlow.exe">
+        Download for Windows
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 1v8M3.5 5.5 7 9l3.5-3.5M1.5 12.5h11"/></svg>
+      </a>
+    </div>
+    <div class="hero-art"><img src="hero.webp" alt="" width="1300" height="1220"></div>
+  </div>
+</header>
+
+<main>
+  <section class="light">
+    <div class="wrap">
+      <span class="pill light">How it works</span>
+      <h2>Three steps, no<br>setup ritual.</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="num">01</div>
+          <h3>Hold <kbd>Ctrl+Alt</kbd></h3>
+          <p>Anywhere in Windows — a text field, a chat box, a code comment. No app to switch to first.</p>
+        </div>
+        <div class="step">
+          <div class="num">02</div>
+          <h3>Say what you mean</h3>
+          <p>A small floating widget turns red while it's listening, so you always know it's live.</p>
+        </div>
+        <div class="step">
+          <div class="num">03</div>
+          <h3>Let go</h3>
+          <p>Whisper transcribes it in under a second and the text is pasted right where your cursor was.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="light">
+    <div class="wrap">
+      <span class="pill light">Why it's different</span>
+      <h2>Built to disappear<br>into your workflow</h2>
+      <div class="feats">
+        <div class="feat">
+          <div class="dot" style="background:#ff0400"></div>
+          <h3>Private by default</h3>
+          <p>Local mode runs OpenAI's Whisper model entirely on your CPU. Audio never touches the internet.</p>
+        </div>
+        <div class="feat">
+          <div class="dot" style="background:#00ccff"></div>
+          <h3>Cloud mode when you need it</h3>
+          <p>Flip one toggle to route through OpenAI's transcription API for noisy rooms or tricky accents.</p>
+        </div>
+        <div class="feat">
+          <div class="dot" style="background:#007bff"></div>
+          <h3>Works in any app</h3>
+          <p>No plugins or integrations to install per-app — it pastes into whatever currently has focus.</p>
+        </div>
+        <div class="feat">
+          <div class="dot" style="background:#2f9e63"></div>
+          <h3>Free &amp; open source</h3>
+          <p>The full source is on GitHub. Read it, change it, or build it yourself from a clone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="get" id="download">
+    <div class="wrap">
+      <span class="pill light">See for yourself</span>
+      <h2>Get Voice Flow</h2>
+      <p class="sub">One executable, nothing to install. Unzips nowhere — just run it.</p>
+      <p class="req">Windows 10/11 (64-bit) · Microphone · ~150 MB<br>free space for the speech model</p>
+      <a class="btn" href="https://github.com/graphixjuls/voice-flow/releases/latest/download/VoiceFlow.exe">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 1v8M3.5 5.5 7 9l3.5-3.5M1.5 12.5h11"/></svg>
+        Download VoiceFlow.exe
+      </a>
+      <span class="ver">Version 2.0 · <a href="https://github.com/graphixjuls/voice-flow/releases" target="_blank" rel="noopener">Release notes</a></span>
+    </div>
+  </section>
+
+  <section class="showcase" aria-label="Voice Flow widget preview">
+    <div class="widget">
+      <div class="w-head">
+        <span class="rec"></span>
+        <div>
+          <div class="w-title">Voice Flow</div>
+          <div class="w-status">Recording...</div>
+        </div>
+      </div>
+      <p class="w-hint">Hold <code>CTRL+ALT</code> to talk</p>
+      <div class="w-mode">
+        <span>Mode</span>
+        <div class="seg" role="group" aria-label="Mode">
+          <button class="on" type="button">Local</button>
+          <button type="button">Cloud</button>
+        </div>
+      </div>
+      <div class="w-label">Recent transcripts</div>
+      <div class="w-list">
+        <p><time>14:02:11</time>remember to send the invoice before Friday</p>
+        <p><time>14:01:40</time>can you draft a reply to the landlord</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Voice Flow — built by graphixjuls.</span>
+    <a href="https://github.com/graphixjuls/voice-flow" target="_blank" rel="noopener">github.com/graphixjuls/voice-flow</a>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.seg button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.seg button').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+    });
+  });
+</script>
+</body>
+</html>
